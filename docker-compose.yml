@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  reverse-proxy:
+  traefik:
     image: traefik:v2.3
     command: --api.insecure=true --providers.docker
     restart: always
@@ -12,14 +12,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik.yml:/etc/traefik/traefik.yml
     networks:
-      - web
+      - traefik
+    extra_hosts: 
+      - host.docker.internal:172.17.0.1
   whoami:
     image: traefik/whoami
     labels:
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
     networks:
-      - web
+      - traefik
 networks:
-  web:
-    external:
-      name: web
+  traefik:
+    driver: bridge
