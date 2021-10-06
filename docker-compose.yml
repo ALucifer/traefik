@@ -8,9 +8,11 @@ services:
     ports:
       - "80:80"
       - "8080:8080"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./acme.json:/acme.json
     networks:
       - traefik
     extra_hosts: 
@@ -18,7 +20,10 @@ services:
   whoami:
     image: traefik/whoami
     labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=webSecure"
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami.tls.certresolver=lets-encr"
     networks:
       - traefik
 networks:

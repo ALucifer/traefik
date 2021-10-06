@@ -10,10 +10,25 @@ api:
   dashboard: true
 
 entryPoints:
-  http:
+  web:
     address: ":80"
-  https:
+    http:
+      redirections:
+        entryPoint:
+          to: "https"
+          scheme: "https"
+          permanent: true
+  webSecure:
     address: ":443"
+
+certificatesResolvers:
+  lets-encr:
+    acme:
+      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      storage: acme.json
+      email: whatever@gmail.com
+      httpChallenge:
+        entryPoint: web
 
 providers:
   docker:
